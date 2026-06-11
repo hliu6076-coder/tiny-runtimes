@@ -1,0 +1,20 @@
+# 排除本机编译出来的二进制（你目录里就有 minidocker/minidocker）
+minidocker
+
+# 常见脏物
+*.exe
+*.test
+*.out
+
+# git / ide
+.git
+.gitignore
+.github
+.vscode
+.idea
+
+# 临时/缓存
+tmp/
+cache/
+*.log
+*.swp

@@ -23,3 +23,10 @@ go build -o minidocker .    # 编译
 sudo ./minidocker images    # 查询镜像
 sudo ./minidocker run alpine /bin/sh  # 启动容器
 ```
+# 3. 使用脚本部署
+```bash
+cd ~/github/tiny-runtimes
+chmod +x deploy.sh
+sudo ./deploy.sh images
+sudo ./deploy.sh run alpine /bin/sh
+```
