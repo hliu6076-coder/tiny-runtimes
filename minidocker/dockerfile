@@ -6,13 +6,11 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 go build -trimpath -o /build/minidocker .
 
-# 第二阶段：准备 Alpine rootfs（放在正确路径下）
+# 第二阶段：仅作为 Alpine 文件系统源
 FROM alpine:3.21 AS rootfs
-RUN mkdir -p /output/var/lib/minidocker/images/alpine/rootfs && \
-    tar -cf - -C / . | tar -xf - -C /output/var/lib/minidocker/images/alpine/rootfs
 
 # 第三阶段：最终镜像
 FROM scratch
 COPY --from=builder /build/minidocker /usr/bin/minidocker
-COPY --from=rootfs /output /
+COPY --from=rootfs / /var/lib/minidocker/images/alpine/rootfs
 ENTRYPOINT ["/usr/bin/minidocker"]

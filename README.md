@@ -30,3 +30,14 @@ chmod +x deploy.sh
 sudo ./deploy.sh images
 sudo ./deploy.sh run alpine /bin/sh
 ```
+# 4. 清理环境
+```bash
+# 停止并删除相关容器
+sudo docker rm -f minidocker-run 2>/dev/null || true
+# 删除本项目镜像
+sudo docker rmi tiny-runtimes:latest 2>/dev/null || true
+# 清理所有构建缓存
+sudo docker builder prune -a -f
+# 重新构建并运行
+sudo ./deploy.sh run alpine /bin/sh
+```
