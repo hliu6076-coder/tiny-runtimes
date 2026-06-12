@@ -6,9 +6,14 @@ import (
     "os/exec"
     "path/filepath"
     "syscall"
+    "time"
 )
 
 const imageBase = "/var/lib/minidocker/images"
+const logFile = "/var/lib/minidocker/minidocker.log"
+
+// 参数配置(init)
+var logStore []string
 
 // 查询本地镜像
 func listImages() {
@@ -90,13 +95,44 @@ func main() {
     switch os.Args[1] {
     case "images":
         listImages()
+        logReturn()
     case "run":
         if len(os.Args) < 3 {
             fmt.Println("用法: run <镜像名> [命令]")
             return
         }
         runContainer(os.Args[2], os.Args[3:])
+        logReturn()
+    case "logReturn":
+        data, err := os.ReadFile(logFile)
+        if err != nil {
+            fmt.Println("暂无日志")
+            return
+        }
+        fmt.Print(string(data))
+        
     default:
         fmt.Println("未知命令:", os.Args[1])
+        logReturn()
+    }
+}
+func logReturn() {
+    dir := filepath.Dir(logFile)
+    if err := os.MkdirAll(dir, 0755); err != nil {
+        fmt.Fprintf(os.Stderr, "创建日志目录失败: %v\n", err)
+        return
+    }
+
+    f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "无法打开日志文件: %v\n", err)
+        return
+    }
+    defer f.Close()
+
+    timestamp := time.Now().Format("2006-01-02 15:04:05")
+    msg := fmt.Sprintf("[%s] 命令: %v\n", timestamp, os.Args)
+    if _, err := f.WriteString(msg); err != nil {
+        fmt.Fprintf(os.Stderr, "写入日志失败: %v\n", err)
     }
 }

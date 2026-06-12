@@ -23,13 +23,26 @@ go build -o minidocker .    # 编译
 sudo ./minidocker images    # 查询镜像
 sudo ./minidocker run alpine /bin/sh  # 启动容器
 ```
-# 3. 使用脚本部署
+#### 3. 使用脚本部署
 ```bash
 cd ~/github/tiny-runtimes
 chmod +x deploy.sh
 sudo ./deploy.sh images
 sudo ./deploy.sh run alpine /bin/sh
 ```
+#### 4.查询CLI
+```bash
+# 查看所有进程（包括 minidocker 自身）
+ps aux
+# 或者直接查看 /proc
+ls /proc
+
+sudo docker ps     # 查看正在运行的容器
+sudo docker run --rm --privileged --name logReturn tiny-runtimes:latest images
+sudo docker logs b54145479ae7          # 查看正在运行的容器日志
+
+```
+
 # 4. 清理环境
 ```bash
 # 停止并删除相关容器
